@@ -1,0 +1,11 @@
+com\sogeti\upm\data\UserOTP.class
+com\sogeti\upm\data\Address.class
+com\sogeti\upm\service\UPMService.class
+com\sogeti\upm\configuration\UserProfileConfiguration.class
+com\sogeti\upm\data\User.class
+com\sogeti\upm\command\UserLoginCommand.class
+com\sogeti\upm\util\UPMUtils.class
+com\sogeti\upm\data\State.class
+com\sogeti\upm\dao\UPMDaoImpl.class
+com\sogeti\upm\controller\UserLoginController.class
+com\sogeti\upm\controller\GenerateOTPController.class
