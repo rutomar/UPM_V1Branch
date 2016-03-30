@@ -8,14 +8,15 @@ com\sogeti\upm\command\UserLoginCommand.class
 com\sogeti\upm\validator\OTPValidator.class
 com\sogeti\upm\util\UPMUtils.class
 com\sogeti\upm\controller\UpdateUserProfileController.class
-com\sogeti\upm\command\UserProfileCommand.class
 com\sogeti\upm\data\State.class
 com\sogeti\upm\dao\UPMDao.class
 com\sogeti\upm\util\OTPGenerator.class
 com\sogeti\upm\dao\UPMDaoImpl.class
 com\sogeti\upm\validator\RegisterUserValidator.class
 com\sogeti\upm\controller\UserLoginController.class
+com\sogeti\upm\util\UPMConstantsUtil.class
 com\sogeti\upm\controller\RegisterUserController.class
 com\sogeti\upm\data\User.class
+com\sogeti\upm\command\RegisterUserCommand.class
 com\sogeti\upm\validator\UpdateUserProfileValidator.class
 com\sogeti\upm\controller\GenerateOTPController.class

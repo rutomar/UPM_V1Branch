@@ -1,0 +1,5 @@
+projectKey=com.sogeti.assigment:UPM
+serverUrl=http://localhost:9000
+dashboardUrl=http://localhost:9000/dashboard/index/com.sogeti.assigment:UPM
+ceTaskId=AVPHp2dCBNbpI6vZ0JVg
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AVPHp2dCBNbpI6vZ0JVg

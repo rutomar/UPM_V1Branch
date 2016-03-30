@@ -1,5 +1,8 @@
 package com.sogeti.upm.controller;
 
+import static com.sogeti.upm.util.UPMConstantsUtil.FORM_USER_LOGIN;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_USER_LOGIN;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +25,7 @@ import com.sogeti.upm.validator.OTPValidator;
 @RequestMapping("/")
 public class GenerateOTPController {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(UserLoginController.class);
+	private static Logger logger = LoggerFactory.getLogger(UserLoginController.class);
 
 	/** The otp validator. */
 	@Autowired
@@ -48,9 +51,9 @@ public class GenerateOTPController {
 	 */
 	@RequestMapping(value = "/userLogin", method = RequestMethod.GET)
 	public String showUserLogin(ModelMap model) {
-		LOGGER.debug("Showing User Login Screen.");
-		model.addAttribute("userLoginCommand", new UserLoginCommand());
-		return "userLogin";
+		logger.debug("Showing User Login Screen.");
+		model.addAttribute(FORM_USER_LOGIN, new UserLoginCommand());
+		return VIEW_USER_LOGIN;
 	}
 
 }

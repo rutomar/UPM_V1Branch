@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OTPGenerator {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(OTPGenerator.class);
+	private static Logger logger = LoggerFactory.getLogger(OTPGenerator.class);
 
 	/** The Constant ELIG_ALPHA_SET. */
 	private static final String ELIG_ALPHA_SET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -97,7 +97,7 @@ public class OTPGenerator {
 			int randPicker = (int) (Math.random() * characters.size());
 			output.append(characters.remove(randPicker));
 		}
-		LOGGER.info("Generated OTP :" + output.toString());
+		logger.info("Generated OTP :" + output.toString());
 		return output.toString();
 	}
 

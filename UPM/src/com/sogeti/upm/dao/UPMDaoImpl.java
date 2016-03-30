@@ -61,8 +61,8 @@ public class UPMDaoImpl {
 	 * @return the all users
 	 */
 	public List<User> getAllUsers() {
-		List<User> users = em.createQuery("Select a From User a", User.class).getResultList();
-		return users;
+
+		return em.createQuery("Select a From User a", User.class).getResultList();
 	}
 
 	/**
@@ -71,8 +71,9 @@ public class UPMDaoImpl {
 	 * @return the all states
 	 */
 	public List<State> getAllStates() {
-		List<State> states = em.createQuery("Select a From State a", State.class).getResultList();
-		return states;
+
+		return em.createQuery("Select a From State a", State.class).getResultList();
+
 	}
 
 	/**
@@ -95,8 +96,7 @@ public class UPMDaoImpl {
 	 * @return the user
 	 */
 	public User updateUser(User user) {
-		User updatedUser = em.merge(user);
-		return updatedUser;
+		return em.merge(user);
 	}
 
 	/**
@@ -118,8 +118,7 @@ public class UPMDaoImpl {
 	 * @return the user otp
 	 */
 	public UserOTP updateUserOTP(UserOTP userOtp) {
-		UserOTP updatedUserOTP = em.merge(userOtp);
-		return updatedUserOTP;
+		return em.merge(userOtp);
 	}
 
 }

@@ -1,11 +1,14 @@
 package com.sogeti.upm.controller;
 
+import static com.sogeti.upm.util.UPMConstantsUtil.FORM_REGISTER_USER;
+import static com.sogeti.upm.util.UPMConstantsUtil.FORM_USER_LOGIN;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_REGISTER_USER;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_USER_LOGIN;
 import static com.sogeti.upm.util.UPMUtils.COUNTRY;
 
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +28,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.sogeti.upm.command.RegisterUserCommand;
 import com.sogeti.upm.command.UserLoginCommand;
-import com.sogeti.upm.command.UserProfileCommand;
 import com.sogeti.upm.data.Address;
 import com.sogeti.upm.data.User;
 import com.sogeti.upm.service.UPMService;
@@ -39,7 +42,7 @@ import com.sogeti.upm.validator.RegisterUserValidator;
 @SessionAttributes({ "users", "states" })
 public class RegisterUserController {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(RegisterUserController.class);
+	private static Logger logger = LoggerFactory.getLogger(RegisterUserController.class);
 
 	/** The upm service. */
 	@Autowired
@@ -55,13 +58,13 @@ public class RegisterUserController {
 	 * @param binder
 	 *            the binder
 	 */
-	@InitBinder("userProfileCommand")
+	@InitBinder(FORM_REGISTER_USER)
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(validator);
 	}
 
 	@InitBinder
-	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
+	protected void initBinder(ServletRequestDataBinder binder) throws ServletException {
 		// Convert multipart object to byte[]
 		binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());
 
@@ -81,7 +84,7 @@ public class RegisterUserController {
 	 */
 	@RequestMapping(value = "/processUserProfile", params = "createUser", method = RequestMethod.POST)
 	public String createUserProfile(
-			@Validated @ModelAttribute("userProfileCommand") UserProfileCommand userProfileCommand,
+			@Validated @ModelAttribute(FORM_REGISTER_USER) RegisterUserCommand userProfileCommand,
 			BindingResult bindingResult, ModelMap model) {
 
 		boolean exisitingUser = isExistingUser(userProfileCommand.getLoginId());
@@ -91,22 +94,16 @@ public class RegisterUserController {
 				bindingResult.addError(new ObjectError("loginId", "User ID already exists."));
 			}
 			model.addAttribute("states", upmService.getAllStates());
-			model.addAttribute("userProfileCommand", userProfileCommand);
-			return "registerUser";
+			model.addAttribute(FORM_REGISTER_USER, userProfileCommand);
+			return VIEW_REGISTER_USER;
 		}
 
-		try {
-			User user = convertVOtoBO(userProfileCommand);
-			upmService.registerUser(user);
-			model.addAttribute("users", upmService.getAllUsers());
-			model.addAttribute("userLoginCommand", new UserLoginCommand());
-			model.addAttribute("msg", "User Registered Successfully!");
-		} catch (Exception e) {
-			LOGGER.info(e.getMessage());
-			model.addAttribute("userLoginCommand", new UserLoginCommand());
-			return "userLogin";
-		}
-		return "userLogin";
+		User user = convertVOtoBO(userProfileCommand);
+		upmService.registerUser(user);
+		model.addAttribute("users", upmService.getAllUsers());
+		model.addAttribute(FORM_USER_LOGIN, new UserLoginCommand());
+		model.addAttribute("msg", "User Registered Successfully!");
+		return VIEW_USER_LOGIN;
 
 	}
 
@@ -119,32 +116,32 @@ public class RegisterUserController {
 	 */
 	@RequestMapping(value = "/processUserProfile", params = "clear", method = RequestMethod.POST)
 	public ModelAndView clearUserProfile() {
-		ModelAndView model = new ModelAndView("registerUser");
+		ModelAndView model = new ModelAndView(VIEW_REGISTER_USER);
 		model.addObject("states", upmService.getAllStates());
-		model.addObject("userProfileCommand", new UserProfileCommand());
+		model.addObject(FORM_REGISTER_USER, new RegisterUserCommand());
 		return model;
 	}
 
 	/**
 	 * Convert v oto bo.
 	 *
-	 * @param userProfileCommand
+	 * @param registerUserCommand
 	 *            the user profile command
 	 * @return the user
 	 */
 	// helpers
-	private User convertVOtoBO(UserProfileCommand userProfileCommand) {
+	private User convertVOtoBO(RegisterUserCommand registerUserCommand) {
 		User user = new User();
-		LOGGER.debug("Converting Command to User Object.");
-		user.setLoginID(userProfileCommand.getLoginId());
-		user.setPassword(userProfileCommand.getPassword());
-		user.setUserName(userProfileCommand.getUserName());
-		user.setEmailId(userProfileCommand.getEmailId());
-		Address address = new Address(userProfileCommand.getLoginId(),
-				Integer.parseInt(userProfileCommand.getHouseNo()), userProfileCommand.getStreet(),
-				userProfileCommand.getCity(), userProfileCommand.getState(), COUNTRY);
+		logger.debug("Converting Command to User Object.");
+		user.setLoginID(registerUserCommand.getLoginId());
+		user.setPassword(registerUserCommand.getPassword());
+		user.setUserName(registerUserCommand.getUserName());
+		user.setEmailId(registerUserCommand.getEmailId());
+		Address address = new Address(registerUserCommand.getLoginId(),
+				Integer.parseInt(registerUserCommand.getHouseNo()), registerUserCommand.getStreet(),
+				registerUserCommand.getCity(), registerUserCommand.getState(), COUNTRY);
 		user.setAddress(address);
-		user.setImage(userProfileCommand.getFile().getBytes());
+		user.setImage(registerUserCommand.getFile().getBytes());
 		return user;
 	}
 

@@ -19,24 +19,6 @@ public class UPMUtils {
 	}
 
 	/**
-	 * Checks if is empty.
-	 *
-	 * @param string
-	 *            the string
-	 * @return true, if is empty
-	 */
-	public static boolean isEmpty(String string) {
-
-		if (string == null) {
-			return true;
-		} else if (string.length() == 0) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Gets the valid user.
 	 *
 	 * @param loginId

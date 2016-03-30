@@ -43,7 +43,7 @@
 									style="display: block;" >
 									<c:if test="${ not empty failureMsg }">
 										<div class="alert alert-danger">
-											<strong>Failure! </strong>${ failureMsg }
+											<strong>Failure! </strong> ${ failureMsg }
 										</div>
 									</c:if>
 									<c:if test="${ not empty msg }">

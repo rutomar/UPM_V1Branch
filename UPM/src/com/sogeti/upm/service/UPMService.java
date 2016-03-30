@@ -84,16 +84,35 @@ public class UPMService {
 	 */
 	public UserOTP generateUserOTP(User user) {
 
+		UserOTP userOtp = new UserOTP();
+
 		String otp = otpGenerator.generateOTPString();
 
-		UserOTP userOTP = new UserOTP();
-		userOTP.setUser(user);
-		userOTP.setOtp(otp);
-		userOTP.setUserId(user.getLoginID());
-		userOTP.setGeneratedTmstmp(new Date(System.currentTimeMillis()));
-		// Persist the User OTP
-		upmDao.createUserOTP(userOTP);
-		return userOTP;
+		// if user OTP already exists
+		// overwrite the generation timestamp & generated OTP
+		// else create a new OTP
+
+		if (user.getUserOTP() != null) {
+
+			userOtp = user.getUserOTP();
+			// make it persistent
+			userOtp = getUserOTP(userOtp.getOtpId());
+			userOtp.setGeneratedTmstmp(new Date(System.currentTimeMillis()));
+			userOtp.setOtp(otp);
+			// update the UserOTP
+			userOtp = updateUserOTP(userOtp);
+
+		} else {
+
+			userOtp.setUser(user);
+			userOtp.setOtp(otp);
+			userOtp.setUserId(user.getLoginID());
+			userOtp.setGeneratedTmstmp(new Date(System.currentTimeMillis()));
+			// create the new User OTP
+			upmDao.createUserOTP(userOtp);
+		}
+
+		return userOtp;
 
 	}
 

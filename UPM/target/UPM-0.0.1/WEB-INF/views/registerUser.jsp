@@ -62,93 +62,97 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<form:form id="user-register-form" method="post"
-									action="processUserProfile" modelAttribute="userProfileCommand"
-									role="form" style="display: block;"  enctype="multipart/form-data">
-									<div class="form-group">
-										<form:input type="text" name="loginId" path="loginId"
-											tabindex="1" class="form-control" placeholder="Login ID"
-											value=""></form:input>
-										<form:errors path="loginId" class="error" />
+									action="processUserProfile"
+									modelAttribute="registerUserCommand" role="form"
+									style="display: block;" enctype="multipart/form-data">
+									<div class="col-lg-6">
+										<div class="form-group">
+											<form:input type="text" name="loginId" path="loginId"
+												tabindex="1" class="form-control" placeholder="Login ID"
+												value=""></form:input>
+											<form:errors path="loginId" class="error" />
+										</div>
+										<div class="form-group">
+											<form:input type="password" name="password" path="password"
+												tabindex="2" class="form-control" placeholder="Password"></form:input>
+											<form:errors path="password" class="error" />
+										</div>
+										<div class="form-group">
+											<form:input type="text" name="userName" path="userName"
+												tabindex="3" class="form-control" placeholder="Username"
+												value=""></form:input>
+											<form:errors path="userName" class="error" />
+										</div>
+										<div class="form-group">
+											<form:input type="email" name="emailId" path="emailId"
+												tabindex="4" class="form-control"
+												placeholder="Email Address" value=""></form:input>
+											<form:errors path="emailId" class="error" />
+										</div>
+										<div class="form-group text-center panel-heading">
+											<h4>Address</h4>
+										</div>
+										<hr>
+										<div class="form-group">
+											<form:input type="text" name="houseNo" path="houseNo"
+												tabindex="5" class="form-control" placeholder="House No."></form:input>
+											<form:errors path="houseNo" class="error" />
+										</div>
+										<div class="form-group">
+											<form:input type="text" name="street" path="street"
+												tabindex="6" class="form-control" placeholder="Street"></form:input>
+											<form:errors path="street" class="error" />
+										</div>
+										<div class="form-group">
+											<form:input type="text" name="city" path="city" tabindex="7"
+												class="form-control" placeholder="City"></form:input>
+											<form:errors path="city" class="error" />
+										</div>
+										<div class="form-group">
+											<form:select name="state" path="state" id="state"
+												tabindex="8" class="form-control" required="required">
+												<form:option value="0" label="-Select-" />
+												<form:options items="${states}" itemValue="stateId"
+													itemLabel="stateName" />
+											</form:select>
+											<form:errors path="state" class="error" />
+										</div>
+										<div class="form-group">
+											<label for="country">Country</label>
+											<form:input type="text" name="country" path="country"
+												tabindex="9" class="form-control" placeholder="Country"
+												readonly="true" value="IN"></form:input>
+											<form:errors path="country" class="error" />
+										</div>
 									</div>
-									<div class="form-group">
-										<form:input type="password" name="password" path="password"
-											tabindex="2" class="form-control" placeholder="Password"></form:input>
-										<form:errors path="password" class="error" />
-									</div>
-									<div class="form-group">
-										<form:input type="text" name="userName" path="userName"
-											tabindex="3" class="form-control" placeholder="Username"
-											value=""></form:input>
-										<form:errors path="userName" class="error" />
-									</div>
-									<div class="form-group">
-										<form:input type="email" name="emailId" path="emailId"
-											tabindex="4" class="form-control" placeholder="Email Address"
-											value=""></form:input>
-										<form:errors path="emailId" class="error" />
-									</div>
-									<div class="form-group text-center panel-heading">
-										<h4>Address</h4>
-									</div>
-									<hr>
-									<div class="form-group">
-										<form:input type="text" name="houseNo" path="houseNo"
-											tabindex="5" class="form-control" placeholder="House No."></form:input>
-										<form:errors path="houseNo" class="error" />
-									</div>
-									<div class="form-group">
-										<form:input type="text" name="street" path="street"
-											tabindex="6" class="form-control" placeholder="Street"></form:input>
-										<form:errors path="street" class="error" />
-									</div>
-									<div class="form-group">
-										<form:input type="text" name="city" path="city" tabindex="7"
-											class="form-control" placeholder="City"></form:input>
-										<form:errors path="city" class="error" />
-									</div>
-									<div class="form-group">
-										<form:select name="state" path="state" id="state" tabindex="8"
-											class="form-control" required="required">
-											<form:option value="0" label="-Select-" />
-											<form:options items="${states}" itemValue="stateId"
-												itemLabel="stateName" />
-										</form:select>
-										<form:errors path="state" class="error" />
-									</div>
-									<div class="form-group">
-										<label for="country">Country</label>
-										<form:input type="text" name="country" path="country"
-											tabindex="9" class="form-control" placeholder="Country"
-											readonly="true" value="IN"></form:input>
-										<form:errors path="country" class="error" />
-									</div>
+									<div class="col-lg-6">
+										<div class="form-group">
+											<img id='img-upload' class="img-thumbnail" src=""
+												alt="Profile Picture" />
+										</div>
 
-									<%-- <div class="form-group">
-										<label for="file">Upload profile picture</label> 
-										<input
-											type="file" name="file" tabindex="10" class="form-control" />
-										<form:errors path="file" class="error" />
-									</div> --%>
-
-									<div class="form-group">
-										<label>Profile Picture</label>
-										<!-- <span class="input-group-btn"> <span
-											class="btn btn-default btn-file">  Browse… -->
-										<input type="file" id="imgInp" name="file" tabindex="10"
-											class="form-control">
-										<form:errors path="file" class="error"  />
-										<!-- </span> -->
-										<!-- </span>  -->
-										<!-- <input type="text" class="form-control" readonly> -->
-										<img id='img-upload' class="img-thumbnail" />
+										<div class="form-group">
+											<label for="file">Upload profile picture</label>
+											<form:input type="file" name="file" id="imgInp" path="file"
+												tabindex="10" class="form-control" />
+											<form:errors path="file" class="error" />
+										</div>
 									</div>
-
 									<div class="form-group ">
 										<div class="form-actions">
-											<button type="submit" name="createUser" id="register-submit"
-												tabindex="11" class="btn  btn-success">Register Now</button>
-											<button type="submit" formnovalidate="formnovalidate" tabindex="12"
-												class="btn" name="clear">Cancel</button>
+											<div class="col-lg-7">
+												<button type="submit" name="createUser" id="register-submit"
+													tabindex="11" class="btn  btn-success">Register
+													Now</button>
+												<button type="submit" formnovalidate="formnovalidate"
+													tabindex="12" class="btn" name="clear">Cancel</button>
+											</div>
+											<div class="col-lg-5">
+												<div class="text-center">
+													<a href="<c:url value="userLogin" />" tabindex="13"
+														class="link-style">Go back to User Login!</a>
+												</div>
+											</div>
 										</div>
 									</div>
 								</form:form>

@@ -1,6 +1,15 @@
 package com.sogeti.upm.controller;
 
-import java.util.Date;
+import static com.sogeti.upm.util.UPMConstantsUtil.FORM_GENERATE_OTP;
+import static com.sogeti.upm.util.UPMConstantsUtil.FORM_REGISTER_USER;
+import static com.sogeti.upm.util.UPMConstantsUtil.FORM_USER_LOGIN;
+import static com.sogeti.upm.util.UPMConstantsUtil.STATES;
+import static com.sogeti.upm.util.UPMConstantsUtil.USERS;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_GENERATE_OTP;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_REGISTER_USER;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_USER_LOGIN;
+import static com.sogeti.upm.util.UPMConstantsUtil.VIEW_USER_PROFILE;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,12 +30,13 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sogeti.upm.command.GenerateOTPCommand;
+import com.sogeti.upm.command.RegisterUserCommand;
 import com.sogeti.upm.command.UserLoginCommand;
-import com.sogeti.upm.command.UserProfileCommand;
 import com.sogeti.upm.data.User;
 import com.sogeti.upm.data.UserOTP;
 import com.sogeti.upm.service.UPMService;
 import com.sogeti.upm.util.OTPGenerator;
+import com.sogeti.upm.util.UPMConstantsUtil;
 import com.sogeti.upm.util.UPMUtils;
 import com.sogeti.upm.validator.UserLoginValidator;
 
@@ -38,7 +48,7 @@ import com.sogeti.upm.validator.UserLoginValidator;
 @SessionAttributes({ "users", "states" })
 public class UserLoginController {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(UserLoginController.class);
+	private static Logger logger = LoggerFactory.getLogger(UserLoginController.class);
 	/** The upm service. */
 	@Autowired
 	UPMService upmService;
@@ -61,7 +71,7 @@ public class UserLoginController {
 	 * @param binder
 	 *            the binder
 	 */
-	@InitBinder("userLoginCommand")
+	@InitBinder(UPMConstantsUtil.FORM_USER_LOGIN)
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(loginValidator);
 	}
@@ -75,11 +85,11 @@ public class UserLoginController {
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String welcomeUser(ModelMap model) {
-		LOGGER.debug("Welcome User");
-		model.addAttribute("users", upmService.getAllUsers());
-		model.addAttribute("states", upmService.getAllStates());
-		model.addAttribute("userLoginCommand", new UserLoginCommand());
-		return "userLogin";
+		logger.debug("Welcome User");
+		model.addAttribute(USERS, upmService.getAllUsers());
+		model.addAttribute(STATES, upmService.getAllStates());
+		model.addAttribute(UPMConstantsUtil.FORM_USER_LOGIN, new UserLoginCommand());
+		return UPMConstantsUtil.VIEW_USER_LOGIN;
 	}
 
 	/**
@@ -94,38 +104,35 @@ public class UserLoginController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/processForm", params = "login", method = RequestMethod.POST)
-	public String userLogin(@Validated @ModelAttribute("userLoginCommand") UserLoginCommand userLoginCommand,
+	public String userLogin(
+			@Validated @ModelAttribute(UPMConstantsUtil.FORM_USER_LOGIN) UserLoginCommand userLoginCommand,
 			BindingResult bindingResult, ModelMap model) {
-		LOGGER.debug("Login User");
-		try {
-			// if any attributes are empty , return back to login page
-			if (bindingResult.hasErrors()) {
-				model.addAttribute("userLoginCommand", userLoginCommand);
-				return "userLogin";
-			}
+		logger.debug("Login User");
 
-			// Validate the authenticity of the user & OTP generation Tmstmp
-			User user = getValidUser(userLoginCommand.getLoginId(), model);
-
-			// if User is Authenticate go to the User Profile Page
-			if (isUserAuthentic(user, userLoginCommand, bindingResult)) {
-				// delete the old UserOTP
-				LOGGER.debug("User is Authentic.");
-				upmService.deleteUserOTP(user);
-				// set the attributes to redirect to UserProfile Page
-				model.addAttribute("loginId", user.getLoginID());
-				// updated Users Data
-				model.addAttribute("users", upmService.getAllUsers());
-				return "redirect:/userProfile";
-			}
-
-			model.addAttribute("userLoginCommand", userLoginCommand);
-		} catch (Exception e) {
-			model.addAttribute("userLoginCommand", userLoginCommand);
-			LOGGER.error(e.getMessage());
+		// if any attributes are empty , return back to login page
+		if (bindingResult.hasErrors()) {
+			model.addAttribute(FORM_USER_LOGIN, userLoginCommand);
+			return VIEW_USER_LOGIN;
 		}
 
-		return "userLogin";
+		// Validate the authenticity of the user & OTP generation Tmstmp
+		User user = getValidUser(userLoginCommand.getLoginId(), model);
+
+		// if User is Authenticate go to the User Profile Page
+		if (isUserAuthentic(user, userLoginCommand, bindingResult)) {
+			// delete the old UserOTP
+			logger.debug("User is Authentic.");
+			upmService.deleteUserOTP(user);
+			// set the attributes to redirect to UserProfile Page
+			model.addAttribute("loginId", user.getLoginID());
+			// updated Users Data
+			model.addAttribute(USERS, upmService.getAllUsers());
+			return "redirect:/" + VIEW_USER_PROFILE;
+		}
+
+		model.addAttribute(FORM_USER_LOGIN, userLoginCommand);
+
+		return VIEW_USER_LOGIN;
 
 	}
 
@@ -144,8 +151,8 @@ public class UserLoginController {
 		ModelAndView modelView = new ModelAndView();
 
 		if (loginId == null || loginId.length() == 0) {
-			modelView.setViewName("userLogin");
-			modelView.addObject("userLoginCommand", new UserLoginCommand());
+			modelView.setViewName(VIEW_USER_LOGIN);
+			modelView.addObject(FORM_USER_LOGIN, new UserLoginCommand());
 			modelView.addObject("failureMsg", "Login ID is mandatory for OTP Generation");
 			return modelView;
 		}
@@ -153,31 +160,16 @@ public class UserLoginController {
 		User user = getValidUser(loginId, model);
 
 		if (user != null) {
-			// Update if User OTP Already exists
-			UserOTP userOtp = new UserOTP();
-			if (user.getUserOTP() != null) {
-
-				userOtp = user.getUserOTP();
-				userOtp = upmService.getUserOTP(userOtp.getOtpId());
-				userOtp.setGeneratedTmstmp(new Date(System.currentTimeMillis()));
-				userOtp.setOtp(otpGenerator.generateOTPString());
-				upmService.updateUserOTP(userOtp);
-
-			} else {
-
-				// Generate the OTP
-				userOtp = upmService.generateUserOTP(user);
-			}
-
+			UserOTP userOtp = upmService.generateUserOTP(user);
 			modelView.addObject("userOtp", userOtp);
-			modelView.addObject("otpCommand", new GenerateOTPCommand(userOtp.getUserId(), userOtp.getOtp()));
-			modelView.addObject("users", upmService.getAllUsers());
-			modelView.setViewName("generateOTP");
+			modelView.addObject(FORM_GENERATE_OTP, new GenerateOTPCommand(userOtp.getUserId(), userOtp.getOtp()));
+			modelView.addObject(USERS, upmService.getAllUsers());
+			modelView.setViewName(VIEW_GENERATE_OTP);
 
 		} else {
 
-			modelView.setViewName("userLogin");
-			modelView.addObject("userLoginCommand", new UserLoginCommand());
+			modelView.setViewName(UPMConstantsUtil.VIEW_USER_LOGIN);
+			modelView.addObject(UPMConstantsUtil.FORM_USER_LOGIN, new UserLoginCommand());
 			modelView.addObject("failureMsg", "Invalid User. Please Register.");
 		}
 
@@ -193,10 +185,10 @@ public class UserLoginController {
 	 */
 	@RequestMapping(value = "/processForm", params = "registerUser")
 	public String registerUser(ModelMap model) {
-		model.addAttribute("userProfileCommand", new UserProfileCommand());
-		model.addAttribute("states", upmService.getAllStates());
+		model.addAttribute(FORM_REGISTER_USER, new RegisterUserCommand());
+		model.addAttribute(STATES, upmService.getAllStates());
 		model.addAttribute("country", "IN");
-		return "registerUser";
+		return VIEW_REGISTER_USER;
 	}
 	// helper methods
 
@@ -223,12 +215,8 @@ public class UserLoginController {
 			if (user.getUserOTP() != null) {
 				if (!user.getUserOTP().getOtp().equals(formUser.getOtp())) {
 					errors.rejectValue("otp", "otp.incorrect", "Enter the correct OTP");
-				} else {
-
-					if ((System.currentTimeMillis()
-							- user.getUserOTP().getGeneratedTmstmp().getTime()) > TimeUnit.MINUTES.toMillis(1)) {
-						errors.rejectValue("otp", "otp.expired", "OTP has expired. Generate OTP again.");
-					}
+				} else if (isOTPExpired(user.getUserOTP().getGeneratedTmstmp().getTime())) {
+					errors.rejectValue("otp", "otp.expired", "OTP has expired. Generate OTP again.");
 				}
 
 			} else
@@ -239,6 +227,22 @@ public class UserLoginController {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Checks if is OTP for this User is expired
+	 *
+	 * @param generation
+	 *            timestamp
+	 *
+	 * @return true, if otp is expired
+	 */
+	private boolean isOTPExpired(long generatedTmstmp) {
+
+		if ((System.currentTimeMillis() - generatedTmstmp) > TimeUnit.MINUTES.toMillis(1)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -253,7 +257,7 @@ public class UserLoginController {
 	private User getValidUser(String loginId, ModelMap model) {
 
 		@SuppressWarnings("unchecked")
-		List<User> users = (List<User>) model.get("users");
+		List<User> users = (List<User>) model.get(USERS);
 
 		if (users != null) {
 			for (User user : users) {

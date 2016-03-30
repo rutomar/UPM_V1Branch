@@ -5,7 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.sogeti.upm.command.UserProfileCommand;
+import com.sogeti.upm.command.RegisterUserCommand;
 
 /**
  * The Class RegisterUserValidator.
@@ -21,7 +21,7 @@ public class RegisterUserValidator implements Validator {
 	@Override
 	public boolean supports(Class<?> clazz) {
 
-		return UserProfileCommand.class.equals(clazz);
+		return RegisterUserCommand.class.equals(clazz);
 	}
 
 	/*
@@ -33,7 +33,7 @@ public class RegisterUserValidator implements Validator {
 	@Override
 	public void validate(Object command, Errors errors) {
 
-		UserProfileCommand userProfileCommand = (UserProfileCommand) command;
+		RegisterUserCommand userProfileCommand = (RegisterUserCommand) command;
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "loginId", "loginId.required", "Login id is Mandatory.");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required", "Password is Mandatory");

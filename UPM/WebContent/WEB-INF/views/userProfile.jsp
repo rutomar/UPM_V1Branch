@@ -73,20 +73,20 @@
 									action="updateUserProfile">
 									<div class="col-lg-6">
 										<div class="form-group">
-											<form:hidden path="loginId" tabindex="1" class="form-control"></form:hidden>
+											<form:hidden path="loginId" class="form-control"></form:hidden>
 										</div>
 										<div class="form-group">
 											<label for="userName">User Name</label>
 
 											<form:input type="text" name="userName" path="userName"
-												tabindex="3" class="form-control" placeholder="Username"
+												tabindex="2" class="form-control" placeholder="Username"
 												required="required" value=""></form:input>
 											<form:errors path="userName" class="error" />
 										</div>
 										<div class="form-group">
 											<label for="email">Email Address</label>
 											<form:input type="email" name="emailId" path="emailId"
-												tabindex="4" class="form-control"
+												tabindex="3" class="form-control"
 												placeholder="Email Address" required="true" value=""></form:input>
 											<form:errors path="emailId" class="error" />
 										</div>
@@ -97,27 +97,27 @@
 										<div class="form-group">
 											<label for="houseNo">House No.</label>
 											<form:input type="text" name="houseNo" path="houseNo"
-												tabindex="5" class="form-control" placeholder="House No."
+												tabindex="4" class="form-control" placeholder="House No."
 												required="required"></form:input>
 											<form:errors path="houseNo" class="error" />
 										</div>
 										<div class="form-group">
 											<label for="street">Street</label>
 											<form:input type="text" name="street" path="street"
-												tabindex="6" class="form-control" placeholder="Street"
+												tabindex="5" class="form-control" placeholder="Street"
 												required="required"></form:input>
 											<form:errors path="street" class="error" />
 										</div>
 										<div class="form-group">
 											<label for="city">City</label>
-											<form:input type="text" name="city" path="city" tabindex="7"
+											<form:input type="text" name="city" path="city" tabindex="6"
 												class="form-control" placeholder="City" required="required"></form:input>
 											<form:errors path="city" class="error" />
 										</div>
 										<div class="form-group">
 											<label for="state">State</label>
 											<form:select name="state" path="state" id="state"
-												tabindex="8" class="form-control" required="required">
+												tabindex="7" class="form-control" required="required">
 												<form:option value="0" label="-Select-" />
 												<form:options items="${states}" itemValue="stateId"
 													itemLabel="stateName" />
@@ -127,45 +127,35 @@
 										<div class="form-group">
 											<label for="country">Country</label>
 											<form:input type="text" name="country" path="country"
-												tabindex="9" class="form-control" placeholder="Country"
+												tabindex="8" class="form-control" placeholder="Country"
 												required="required" readonly="readonly" value="IN"></form:input>
 											<form:errors path="country" class="error" />
 										</div>
 									</div>
 
 									<div class="col-lg-6">
+										<div class="form-group">
+											<img id='img-upload' class="img-thumbnail"
+												src="data:image/gif;base64,${imageSrc}"
+												alt="Profile Picture" />
+											<form:hidden path="imageSrc" id="imageSrc"></form:hidden>
+										</div>
 
 										<div class="form-group">
-											<label for="file">Upload profile picture</label> <input
-												type="file" name="file" tabindex="10" class="form-control"
+											<label for="file">Upload profile picture</label>
+											<form:input type="file" path="file" name="file" id="imgInp"
+												tabindex="9" class="form-control"
 												placeholder="Profile Picture" required="required" />
 											<form:errors path="file" class="error" />
 										</div>
-										<%-- 	<div class="form-group">
-											<label for="img-upload">Profile Picture</label>
-										</div>
-										<div class="form-group">
-
-											<c:if test="${ not empty imageSrc }">
-												<img id='img-upload' class="img-thumbnail" src="" />
-											</c:if>
-
-											<!-- <span class="input-group-btn"> <span
-											class="btn btn-default btn-file">  Browse… -->
-											<input type="file" id="imgInp" name="file" tabindex="10"
-												class="form-control">
-											<!-- </span> -->
-											<!-- </span>  -->
-											<!-- <input type="text" class="form-control" readonly> -->
-
-										</div> --%>
+										
 									</div>
 									<div class="col-lg-12">
 										<div class="form-group ">
 											<div class="form-actions">
 												<button type="submit" name="update" id="register-submit"
-													tabindex="11" class="btn  btn-success">Update</button>
-												<input type="submit" tabindex="12" class="btn" name="logout"
+													tabindex="10" class="btn  btn-success">Update</button>
+												<input type="submit" tabindex="11" class="btn" name="logout"
 													value="Logout" formnovalidate="formnovalidate">
 											</div>
 										</div>
@@ -179,7 +169,7 @@
 		</div>
 	</div>
 	<script>
-		$(document).ready(
+ 	$(document).ready(
 				function() {
 					$(document).on(
 							'change',
@@ -221,7 +211,7 @@
 					$("#imgInp").change(function() {
 						readURL(this);
 					});
-				});
+				}); 
 	</script>
 </body>
 
